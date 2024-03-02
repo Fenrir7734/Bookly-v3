@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: core
+          uri: lb://core
+          predicates:
+            - Path=/core/**
+          filters:
+            - StripPrefix=1
+        - id: auth
+          uri: lb://auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+jwt:
+  secret: 'secret'
+  expiration: 172800000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
