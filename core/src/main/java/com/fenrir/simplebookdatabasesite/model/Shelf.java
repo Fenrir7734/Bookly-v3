@@ -24,7 +24,7 @@ public class Shelf {
     @EmbeddedId
     private Id id = new Id();
 
-    @Size(min = 3, max = 1000)
+    @Size(max = 1000)
     @Column(name = "review", length = 1000)
     private String content;
 

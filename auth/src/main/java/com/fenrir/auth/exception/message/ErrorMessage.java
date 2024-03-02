@@ -5,11 +5,11 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public class ErrorMessage {
-    private final int statusCode;
-    private final LocalDateTime timestamp;
-    private final String message;
-    private final String errorCode;
+    private int statusCode;
+    private LocalDateTime timestamp;
+    private String message;
+    private String description;
 }

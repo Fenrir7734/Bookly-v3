@@ -2,23 +2,23 @@ import http from '../http-common'
 
 class GenreService {
     getAll() {
-        return http.get('/genres')
+        return http.get('/core/api/genres')
     }
 
     get(id) {
-        return http.get(`/genres/${id}`)
+        return http.get(`/core/api/genres/${id}`)
     }
 
     create(data) {
-        return http.post('/genres', data)
+        return http.post('/core/api/genres', data)
     }
 
     update(id, data) {
-        return http.put(`/genres/${id}`, data)
+        return http.put(`/core/api/genres/${id}`, data)
     }
 
     delete(id) {
-        return http.delete(`/genres/${id}`)
+        return http.delete(`/core/api/genres/${id}`)
     }
 }
 

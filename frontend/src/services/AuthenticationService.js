@@ -3,11 +3,11 @@ import TokenHelper from "@/utils/TokenHelper";
 
 class AuthenticationService {
     signup(data) {
-        return http.post('/auth/signup', data)
+        return http.post('/auth/api/auth/signup', data)
     }
 
     signin(data) {
-        return http.post('/auth/signin', data)
+        return http.post('/auth/api/auth/signin', data)
     }
 
     logout() {
@@ -19,7 +19,7 @@ class AuthenticationService {
             accessToken: JSON.parse(TokenHelper.getUser()).data.accessToken,
             tokenType: "Bearer"
         }
-        return http.post('/auth/valid', data)
+        return http.post('/auth/api/auth/valid', data)
     }
 }
 

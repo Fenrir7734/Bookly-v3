@@ -1,62 +1,72 @@
 package com.fenrir.auth.security.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.fenrir.auth.entity.UserEntity;
-import com.fenrir.auth.security.oauth2.user.UserPrincipal;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static com.fenrir.auth.security.jwt.JwtClaim.EMAIL_CLAIM;
-import static com.fenrir.auth.security.jwt.JwtClaim.ENABLED_CLAIM;
-import static com.fenrir.auth.security.jwt.JwtClaim.ROLES_CLAIM;
-import static com.fenrir.auth.security.jwt.JwtClaim.USER_ID_CLAIM;
-import static com.fenrir.auth.security.jwt.JwtClaim.VERIFIED_CLAIM;
-
 @Component
-@RequiredArgsConstructor
 public class JwtUtils {
-    private static final String ISSUER = "IV-auth-service";
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    private final JwtConfig jwtConfig;
+    @Value("${fenrir.app.jwtSecret}")
+    private String secret;
 
-    public String generateAccessToken(UserEntity user) {
-        Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecret());
-        String authorities = user.getRole().getName();
+    @Value("${fenrir.app.jwtExpiration}")
+    private int expiration;
 
-        return JWT.create()
-                .withIssuer(ISSUER)
-                .withSubject(user.getEmail())
-                .withClaim(USER_ID_CLAIM.getName(), user.getId())
-                .withClaim(EMAIL_CLAIM.getName(), user.getEmail())
-                .withClaim(ROLES_CLAIM.getName(), authorities)
-                .withClaim(VERIFIED_CLAIM.getName(), user.getVerified())
-                .withClaim(ENABLED_CLAIM.getName(), user.getEnabled())
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(new Date().getTime() + jwtConfig.getExpiration()))
-                .sign(algorithm);
-    }
-
-    public String generateAccessToken(UserPrincipal userPrincipal) {
-        Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecret());
-        String authorities = userPrincipal.getAuthorities().stream()
+    public String generateJwtToken(UserDetails userDetails) {
+        String authorities = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        return JWT.create()
-                .withIssuer(ISSUER)
-                .withSubject(userPrincipal.getUsername())
-                .withClaim(USER_ID_CLAIM.getName(), userPrincipal.getId())
-                .withClaim(EMAIL_CLAIM.getName(), userPrincipal.getUsername())
-                .withClaim(ROLES_CLAIM.getName(), authorities)
-                .withClaim(VERIFIED_CLAIM.getName(), userPrincipal.isVerified())
-                .withClaim(ENABLED_CLAIM.getName(), userPrincipal.isEnabled())
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(new Date().getTime() + jwtConfig.getExpiration()))
-                .sign(algorithm);
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .claim("roles", authorities)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + expiration))
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    }
+
+    public String extractUsername(String token) {
+        return extractClaims(token).getSubject();
+    }
+
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("Expired JWT token: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("Unsupported JWT token: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+        }
+        return false;
     }
 }

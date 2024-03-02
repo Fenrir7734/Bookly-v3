@@ -1,13 +1,14 @@
 package com.fenrir.auth.exception.message;
 
-import jakarta.validation.ConstraintViolation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.validation.FieldError;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+import javax.validation.ConstraintViolation;
+
 @Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConstraintViolationInfo {
     private final String propertyName;
     private final String invalidValue;

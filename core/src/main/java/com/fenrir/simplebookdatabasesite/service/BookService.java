@@ -7,6 +7,7 @@ import com.fenrir.simplebookdatabasesite.exception.exceptions.ResourceCreationEx
 import com.fenrir.simplebookdatabasesite.exception.exceptions.ResourceNotFoundException;
 import com.fenrir.simplebookdatabasesite.model.Book;
 import com.fenrir.simplebookdatabasesite.repository.BookRepository;
+import com.fenrir.simplebookdatabasesite.repository.ShelfRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.util.*;
 public class BookService {
     private BookRepository bookRepository;
     private BookMapper bookMapper;
+    private ShelfRepository shelfRepository;
 
     public BookDTO get(Long id) {
         Book book = getById(id);
@@ -67,6 +69,7 @@ public class BookService {
 
     public void delete(Long id) {
         Book book = getById(id);
+        shelfRepository.deleteAll(shelfRepository.findAllByBook_Id(id));
         bookRepository.delete(book);
     }
 

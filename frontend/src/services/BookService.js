@@ -5,33 +5,33 @@ class BookService {
     getAll(page, size, genre) {
         return http.get(
             typeof genre !== 'undefined'
-                ? `/books?page=${page}&size=${size}&genre=${genre}`
-                : `/books?page=${page}&size=${size}`
+                ? `/core/api/books?page=${page}&size=${size}&genre=${genre}`
+                : `/core/api/books?page=${page}&size=${size}`
         )
     }
 
     getAllAuthorBooks(page, size, authorId) {
-        return http.get(`/books?page=${page}&size=${size}&author=${authorId}`)
+        return http.get(`/core/api/books?page=${page}&size=${size}&author=${authorId}`)
     }
 
     get(id) {
-        return http.get(`/books/${id}`)
+        return http.get(`/core/api/books/${id}`)
     }
 
     getCover(id) {
-        return http.get(`/books/${id}/cover`)
+        return http.get(`/core/api/books/${id}/cover`)
     }
 
     create(data) {
-        return http.post('/books', data, { headers: authHeader() })
+        return http.post('/core/api/books', data, { headers: authHeader() })
     }
 
     update(id, data) {
-        return http.put(`/books/${id}`, data, { headers: authHeader() })
+        return http.put(`/core/api/books/${id}`, data, { headers: authHeader() })
     }
 
     delete(id) {
-        return http.delete(`/books/${id}`, { headers: authHeader() })
+        return http.delete(`/core/api/books/${id}`, { headers: authHeader() })
     }
 }
 

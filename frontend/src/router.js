@@ -12,13 +12,14 @@ import UserDetails from "@/components/UserDetails";
 import BookEdit from "@/components/BookEdit";
 import AuthenticationService from "@/services/AuthenticationService";
 import CommentEdit from "@/components/CommentEdit";
+import TokenHelper from "@/utils/TokenHelper";
 
 const routes = [
     {
         path: "/",
         alias: "/books/:genre?",
         name: "books",
-        component: BooksList
+        component: BooksList,
     },
     {
         path: "/book-details/:bookId",
@@ -90,8 +91,14 @@ router.beforeEach( (to, from, next) => {
     const authRequired = !publicPages.includes(to.name)
     const loggedIn = store.state.auth.status.loggedIn
 
+    const adminPages = ['authors-edit', 'books-edit', ''];
+    const adminRequired = adminPages.includes(to.name);
+    const isAdmin = TokenHelper.isAdmin();
+
     if (authRequired && !loggedIn) {
         return next('/signin')
+    } else if (adminRequired && !isAdmin) {
+        return next('/')
     } else if (authRequired) {
         AuthenticationService.validate()
             .then(() => {

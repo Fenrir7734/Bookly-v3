@@ -1,7 +1,6 @@
 package com.fenrir.auth.security;
 
 import com.fenrir.auth.exception.exceptions.ForbiddenException;
-import com.fenrir.auth.security.oauth2.user.UserPrincipal;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,9 +21,9 @@ public class AuthenticationFacade {
         }
     }
 
-    public UserPrincipal getUserPrincipal() {
+    public UserDetailsImpl getUserPrincipal() {
         Authentication authentication = getAuthentication();
-        return (UserPrincipal) authentication.getPrincipal();
+        return (UserDetailsImpl) authentication.getPrincipal();
     }
 
     private Authentication getAuthentication() {

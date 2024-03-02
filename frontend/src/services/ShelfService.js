@@ -3,35 +3,35 @@ import authHeader from "@/services/AuthHeader";
 
 class ShelfService {
     getAllForBook(page, size, bookId) {
-        return http.get(`/shelves?page=${page}&size=${size}&bookId=${bookId}`)
+        return http.get(`/core/api/shelves?page=${page}&size=${size}&bookId=${bookId}`)
     }
 
     getAllOfUser(page, size, username) {
-        return http.get(`/shelves?page=${page}&size=${size}&username=${username}`)
+        return http.get(`/core/api/shelves?page=${page}&size=${size}&username=${username}`)
     }
 
     getUserBook(username, bookId) {
-        return http.get(`/shelves/${username}/${bookId}`)
+        return http.get(`/core/api/shelves/${username}/${bookId}`)
     }
 
     getBookStats(bookId) {
-        return http.get(`/shelves/book/${bookId}/stats`)
+        return http.get(`/core/api/shelves/book/${bookId}/stats`)
     }
 
     getAuthorStats(authorId) {
-        return http.get(`/shelves/author/${authorId}/stats`)
+        return http.get(`/core/api/shelves/author/${authorId}/stats`)
     }
 
     create(username, body) {
-        return http.post(`/shelves/${username}/${body.id.bookId}`, body, { headers: authHeader() })
+        return http.post(`/core/api/shelves/${username}/${body.id.bookId}`, body, { headers: authHeader() })
     }
 
     update(username, body) {
-        return http.put(`/shelves/${username}/${body.id.bookId}`, body, { headers: authHeader() })
+        return http.put(`/core/api/shelves/${username}/${body.id.bookId}`, body, { headers: authHeader() })
     }
 
     delete(username, bookId) {
-        return http.delete(`/shelves/${username}/${bookId}`, { headers: authHeader() })
+        return http.delete(`/core/api/shelves/${username}/${bookId}`, { headers: authHeader() })
     }
 }
 

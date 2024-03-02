@@ -2,7 +2,6 @@ package com.fenrir.simplebookdatabasesite.controller;
 
 import com.fenrir.simplebookdatabasesite.assembler.UserModelAssembler;
 import com.fenrir.simplebookdatabasesite.assembler.UserSlimModelAssembler;
-import com.fenrir.simplebookdatabasesite.dto.NewPasswordDTO;
 import com.fenrir.simplebookdatabasesite.dto.UserDTO;
 import com.fenrir.simplebookdatabasesite.dto.UserSlimDTO;
 import com.fenrir.simplebookdatabasesite.dto.UserUpdateDTO;
@@ -68,14 +67,5 @@ public class UserController {
 
         UserDTO user = userService.update(username, userDTO);
         return ResponseEntity.ok(userAssembler.toModel(user));
-    }
-
-    @PutMapping(path = "/{username}/change-pass")
-    public ResponseEntity<?> changePassword(
-            @PathVariable("username") String username,
-            @RequestBody NewPasswordDTO passwordDTO) {
-
-        userService.updatePassword(username, passwordDTO);
-        return ResponseEntity.noContent().build();
     }
 }

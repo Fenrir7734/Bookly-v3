@@ -13,10 +13,9 @@ public class ConstraintViolationErrorMessage extends ErrorMessage {
             int statusCode,
             LocalDateTime timestamp,
             String message,
-            String errorCode,
+            String description,
             List<ConstraintViolationInfo> constraintViolations) {
-
-        super(statusCode, timestamp, message, errorCode);
+        super(statusCode, timestamp, message, description);
         this.constraintViolations = constraintViolations;
     }
 }
